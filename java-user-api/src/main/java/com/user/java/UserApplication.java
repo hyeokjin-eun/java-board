@@ -1,13 +1,13 @@
-package com.board.java;
+package com.user.java;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class JavaBaordApplication {
+public class UserApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(JavaBaordApplication.class, args);
+        SpringApplication.run(UserApplication.class, args);
     }
 
 }

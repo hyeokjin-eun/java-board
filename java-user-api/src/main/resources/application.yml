@@ -1,0 +1,12 @@
+server:
+  port: 8082
+
+spring:
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:~/data/java
+  jpa:
+    hibernate:
+      ddl-auto: update
