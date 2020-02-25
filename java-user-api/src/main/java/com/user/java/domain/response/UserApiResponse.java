@@ -7,7 +7,8 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserCreateReq {
+public class UserApiResponse {
+    private Long id;
     private String email;
     private String password;
     private String name;

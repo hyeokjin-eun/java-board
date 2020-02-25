@@ -1,65 +1,75 @@
 package com.user.java.ui;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.user.java.application.UserService;
-import com.user.java.domain.request.UserCreateRes;
-import com.user.java.domain.response.UserCreateReq;
+import com.user.java.application.BaseService;
+import com.user.java.domain.ModelAssembler;
+import com.user.java.domain.exception.UserNotFoundException;
+import com.user.java.domain.request.UserApiRequest;
+import com.user.java.domain.response.UserApiResponse;
+import com.user.java.infra.User;
+import com.user.java.ui.api.UserController;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(UserController.class)
-class UserControllerTest {
+@WebMvcTest
+public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private UserService userService;
+    private BaseService<UserApiRequest, UserApiResponse, User> baseService;
+
+    @MockBean
+    private ModelAssembler<UserApiResponse> modelAssembler;
 
     @ParameterizedTest
-    @CsvSource(value = {"1, email@email.com, password, kim", "2, test@test, test, pack"})
-    void create(Long id, String email, String password, String name) throws Exception {
-        UserCreateRes userCreateRes = UserCreateRes.builder()
+    @CsvSource(value = {"1, email@email.com, password, kim"})
+    @DisplayName("User Detail Controller Test")
+    void create (Long id, String email, String password, String name) throws Exception {
+        UserApiResponse userApiResponse = UserApiResponse.builder()
                 .id(id)
                 .email(email)
                 .password(password)
                 .name(name)
                 .build();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String userJson = objectMapper.writeValueAsString(UserCreateReq.builder()
-                .email(email)
-                .password(password)
-                .name(name)
-                .build());
+        EntityModel<UserApiResponse> mockEntityModel = new EntityModel<>(userApiResponse,
+                linkTo(methodOn(UserController.class).detail(id)).withSelfRel());
 
-        given(userService.create(any(UserCreateReq.class))).willReturn(userCreateRes);
+        given(baseService.detail(id)).willReturn(userApiResponse);
+        given(modelAssembler.toModel(userApiResponse)).willReturn(mockEntityModel);
 
-        mockMvc.perform(post("/user")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(userJson))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(id))
-                .andExpect(jsonPath("email").value(email))
-                .andExpect(jsonPath("password").value(password))
-                .andExpect(jsonPath("name").value(name));
+        mockMvc.perform(get("/users/" + id))
+                .andExpect(status().isOk());
 
-        verify(userService).create(any(UserCreateReq.class));
+        verify(baseService).detail(id);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"404"})
+    @DisplayName("User Detail Controller Not Found")
+    void create(Long id) throws Exception {
+        given(baseService.detail(id)).willThrow(UserNotFoundException.class);
+
+        mockMvc.perform(get("/users/" + id))
+                .andExpect(status().isNotFound());
+
+        verify(baseService).detail(id);
     }
 }

@@ -6,7 +6,7 @@ spring:
     console:
       enabled: true
   datasource:
-    url: jdbc:h2:~/data/java
+    url: jdbc:h2:mem:test
   jpa:
     hibernate:
       ddl-auto: update
