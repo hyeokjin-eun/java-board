@@ -5,7 +5,6 @@ import com.user.java.domain.exception.UserNotFoundException;
 import com.user.java.domain.request.UserApiRequest;
 import com.user.java.domain.response.UserApiResponse;
 import com.user.java.infra.User;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +31,7 @@ public class UserService extends BaseService<UserApiRequest, UserApiResponse, Us
     }
 
     @Override
-    public List<EntityModel<UserApiResponse>> list() {
-        return ;
+    public List<UserApiResponse> list() {
+        return null;
     }
 }

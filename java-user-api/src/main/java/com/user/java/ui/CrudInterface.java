@@ -9,5 +9,5 @@ public interface CrudInterface<Req, Res> {
 
     EntityModel<Res> detail(final Long id);
 
-    CollectionModel<Res> list();
+    CollectionModel<EntityModel<Res>> list();
 }

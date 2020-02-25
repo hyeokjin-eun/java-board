@@ -9,5 +9,5 @@ public interface BaseInterface<Req, Res> {
 
     Res detail(final Long id);
 
-    List<UserApiResponse> list();
+    List<Res> list();
 }

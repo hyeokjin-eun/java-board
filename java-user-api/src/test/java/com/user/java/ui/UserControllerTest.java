@@ -8,21 +8,29 @@ import com.user.java.domain.response.UserApiResponse;
 import com.user.java.infra.User;
 import com.user.java.ui.api.UserController;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -41,7 +49,7 @@ public class UserControllerTest {
     @ParameterizedTest
     @CsvSource(value = {"1, email@email.com, password, kim"})
     @DisplayName("User Detail Controller Test")
-    void create (Long id, String email, String password, String name) throws Exception {
+    void create(Long id, String email, String password, String name) throws Exception {
         UserApiResponse userApiResponse = UserApiResponse.builder()
                 .id(id)
                 .email(email)
@@ -71,5 +79,42 @@ public class UserControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(baseService).detail(id);
+    }
+
+    @Test
+    @DisplayName("User List Controller Test")
+    void list() throws Exception {
+        List<UserApiResponse> userApiResponses = Arrays.asList(
+                UserApiResponse.builder()
+                        .id(1L)
+                        .email("email@email.com")
+                        .password("password")
+                        .name("kim")
+                        .build(),
+                UserApiResponse.builder()
+                        .id(2L)
+                        .email("test@test.com")
+                        .password("test")
+                        .name("pack")
+                        .build(),
+                UserApiResponse.builder()
+                        .id(3L)
+                        .email("alvin@alvin.com")
+                        .password("alvin")
+                        .name("alvin")
+                        .build()
+        );
+
+        CollectionModel<EntityModel<UserApiResponse>> mockCollectionModel = new CollectionModel<>(userApiResponses.stream()
+                .map(modelAssembler::toModel).collect(Collectors.toList()),
+                linkTo(methodOn(CrudController.class).list()).withSelfRel());
+
+        given(baseService.list()).willReturn(userApiResponses);
+        given(modelAssembler.toCollectionModel(userApiResponses)).willReturn(mockCollectionModel);
+
+        mockMvc.perform(get("/users/"))
+                .andExpect(status().isOk());
+
+
     }
 }
