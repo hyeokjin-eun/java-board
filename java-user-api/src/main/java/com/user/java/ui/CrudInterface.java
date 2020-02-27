@@ -4,10 +4,12 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 
+import java.net.URISyntaxException;
+
 public interface CrudInterface<Req, Res> {
-    ResponseEntity<Res> create(final Req req);
+    ResponseEntity<EntityModel<Res>> create(final Req req) throws URISyntaxException;
 
-    EntityModel<Res> detail(final Long id);
+    ResponseEntity<EntityModel<Res>> detail(final Long id);
 
-    CollectionModel<EntityModel<Res>> list();
+    ResponseEntity<CollectionModel<EntityModel<Res>>> list();
 }

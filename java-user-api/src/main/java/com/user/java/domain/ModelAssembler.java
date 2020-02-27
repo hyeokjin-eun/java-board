@@ -9,19 +9,23 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class ModelAssembler<Res> implements RepresentationModelAssembler<Res, EntityModel<Res>> {
 
     @Override
     public EntityModel<Res> toModel(Res res) {
-        return new EntityModel<>(res,
-                linkTo(methodOn(CrudController.class).detail(1L)).withSelfRel());
+        return null;
     }
 
-    public CollectionModel<EntityModel<Res>> toCollectionModel(List<EntityModel<Res>> res) {
+    public CollectionModel<EntityModel<Res>> toCollectionModel(List<EntityModel<Res>> res, String path) {
         return new CollectionModel<>(res,
-                linkTo(methodOn(CrudController.class).list()).withSelfRel());
+                linkTo(CrudController.class).slash(path).withSelfRel());
+    }
+
+    public EntityModel<Res> toModel(Res res, Long id, String path) {
+        return new EntityModel<>(res,
+                linkTo(CrudController.class).slash(path).withRel("list"),
+                linkTo(CrudController.class).slash(path).slash(id).withSelfRel());
     }
 }

@@ -1,13 +1,12 @@
 package com.user.java.application;
 
-import com.user.java.domain.response.UserApiResponse;
-
-import java.util.List;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 
 public interface BaseInterface<Req, Res> {
-    Res create(final Req req);
+    EntityModel<Res> create(final Req req);
 
-    Res detail(final Long id);
+    EntityModel<Res> detail(final Long id);
 
-    List<Res> list();
+    CollectionModel<EntityModel<Res>> list();
 }

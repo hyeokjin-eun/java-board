@@ -1,6 +1,7 @@
 package com.user.java.ui;
 
 import com.user.java.application.BaseService;
+import com.user.java.application.api.UserService;
 import com.user.java.domain.ModelAssembler;
 import com.user.java.domain.exception.UserNotFoundException;
 import com.user.java.domain.request.UserApiRequest;
@@ -13,14 +14,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,11 +34,11 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest
+@SpringBootTest
+@AutoConfigureMockMvc
 public class UserControllerTest {
 
     @Autowired
@@ -43,7 +47,7 @@ public class UserControllerTest {
     @MockBean
     private BaseService<UserApiRequest, UserApiResponse, User> baseService;
 
-    @MockBean
+    @Autowired
     private ModelAssembler<UserApiResponse> modelAssembler;
 
     @ParameterizedTest
@@ -58,7 +62,8 @@ public class UserControllerTest {
                 .build();
 
         EntityModel<UserApiResponse> mockEntityModel = new EntityModel<>(userApiResponse,
-                linkTo(methodOn(UserController.class).detail(id)).withSelfRel());
+                linkTo(methodOn(CrudController.class).detail(userApiResponse.getId())).withSelfRel(),
+                linkTo(methodOn(CrudController.class).list()).withRel("list"));
 
         given(baseService.detail(id)).willReturn(userApiResponse);
         given(modelAssembler.toModel(userApiResponse)).willReturn(mockEntityModel);
