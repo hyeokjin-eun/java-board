@@ -54,21 +54,16 @@ public class UserControllerTest {
     @CsvSource(value = {"1, email@email.com, password, kim"})
     @DisplayName("User Detail Controller Test")
     void create(Long id, String email, String password, String name) throws Exception {
-        UserApiResponse userApiResponse = UserApiResponse.builder()
+        EntityModel<UserApiResponse> userApiResponseEntityModel = modelAssembler.toModel(UserApiResponse.builder()
                 .id(id)
                 .email(email)
                 .password(password)
                 .name(name)
-                .build();
+                .build());
 
-        EntityModel<UserApiResponse> mockEntityModel = new EntityModel<>(userApiResponse,
-                linkTo(methodOn(CrudController.class).detail(userApiResponse.getId())).withSelfRel(),
-                linkTo(methodOn(CrudController.class).list()).withRel("list"));
+        given(baseService.detail(id)).willReturn(userApiResponseEntityModel);
 
-        given(baseService.detail(id)).willReturn(userApiResponse);
-        given(modelAssembler.toModel(userApiResponse)).willReturn(mockEntityModel);
-
-        mockMvc.perform(get("/users/" + id))
+        mockMvc.perform(get("/users" + id))
                 .andExpect(status().isOk());
 
         verify(baseService).detail(id);
@@ -84,42 +79,5 @@ public class UserControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(baseService).detail(id);
-    }
-
-    @Test
-    @DisplayName("User List Controller Test")
-    void list() throws Exception {
-        List<UserApiResponse> userApiResponses = Arrays.asList(
-                UserApiResponse.builder()
-                        .id(1L)
-                        .email("email@email.com")
-                        .password("password")
-                        .name("kim")
-                        .build(),
-                UserApiResponse.builder()
-                        .id(2L)
-                        .email("test@test.com")
-                        .password("test")
-                        .name("pack")
-                        .build(),
-                UserApiResponse.builder()
-                        .id(3L)
-                        .email("alvin@alvin.com")
-                        .password("alvin")
-                        .name("alvin")
-                        .build()
-        );
-
-        CollectionModel<EntityModel<UserApiResponse>> mockCollectionModel = new CollectionModel<>(userApiResponses.stream()
-                .map(modelAssembler::toModel).collect(Collectors.toList()),
-                linkTo(methodOn(CrudController.class).list()).withSelfRel());
-
-        given(baseService.list()).willReturn(userApiResponses);
-        given(modelAssembler.toCollectionModel(userApiResponses)).willReturn(mockCollectionModel);
-
-        mockMvc.perform(get("/users/"))
-                .andExpect(status().isOk());
-
-
     }
 }
