@@ -63,7 +63,7 @@ public class UserControllerTest {
 
         given(baseService.detail(id)).willReturn(userApiResponseEntityModel);
 
-        mockMvc.perform(get("/users" + id))
+        mockMvc.perform(get("/users/" + id))
                 .andExpect(status().isOk());
 
         verify(baseService).detail(id);
@@ -79,5 +79,16 @@ public class UserControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(baseService).detail(id);
+    }
+
+    @Test
+    @DisplayName("User List Controller Test")
+    void list() throws Exception {
+        given(baseService.list()).willReturn();
+
+        mockMvc.perform(get("/users"))
+                .andExpect(status().isOk());
+
+        verify(baseService).list();
     }
 }
