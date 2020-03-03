@@ -84,11 +84,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("User List Controller Test")
     void list() throws Exception {
-        given(baseService.list()).willReturn();
-
         mockMvc.perform(get("/users"))
                 .andExpect(status().isOk());
-
-        verify(baseService).list();
     }
 }
