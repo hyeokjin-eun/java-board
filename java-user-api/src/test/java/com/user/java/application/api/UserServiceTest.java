@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
@@ -30,15 +32,16 @@ class UserServiceTest {
 
     @ParameterizedTest
     @DisplayName("User Detail Service Test")
-    @CsvSource(value = {"1", "2"})
-    void detail(Long id) {
-        given(userRepository.findById(id)).willReturn(User.builder()
+    @CsvSource(value = {"1, email@email.com, password, kim", "2, test@test.com, test, pack"})
+    void detail(Long id, String email, String password, String name) {
+        given(userRepository.findById(id)).willReturn(Optional.of(User.builder()
                 .id(id)
-                .email()
-                .password()
-                .name()
+                .email(email)
+                .password(password)
+                .name(name)
                 .build()
-        )
+        ));
+
         userService.detail(id);
     }
 }
