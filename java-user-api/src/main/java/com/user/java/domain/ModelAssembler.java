@@ -23,9 +23,9 @@ public class ModelAssembler<Res> implements RepresentationModelAssembler<Res, En
                 linkTo(CrudController.class).slash(path).withSelfRel());
     }
 
-    public EntityModel<Res> toModel(Res res, Long id, String path) {
+    public EntityModel<Res> toModel(Res res, Long id) {
         return new EntityModel<>(res,
-                linkTo(CrudController.class).slash(path).withRel("list"),
-                linkTo(CrudController.class).slash(path).slash(id).withSelfRel());
+                linkTo(CrudController.class).withRel("list"),
+                linkTo(CrudController.class).slash(id).withSelfRel());
     }
 }
