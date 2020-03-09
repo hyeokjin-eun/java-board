@@ -24,13 +24,13 @@ public abstract class CrudController<Req, Res, Entity> implements CrudInterface<
         this.baseService = baseService;
     }
 
-    @Override
+    /*@Override
     @PostMapping("")
     public ResponseEntity<EntityModel<Res>> create(@RequestBody Req req) throws URISyntaxException {
         EntityModel<Res> entityModel = baseService.create(req);
         return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
-    }
+    }*/
 
     @Override
     @GetMapping("{id}")

@@ -4,7 +4,6 @@ import com.user.java.domain.request.UserApiRequest;
 import com.user.java.domain.response.UserApiResponse;
 import com.user.java.infra.User;
 import com.user.java.infra.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service

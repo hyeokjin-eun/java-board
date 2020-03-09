@@ -12,10 +12,12 @@ import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/*
 @Service
 public class UserServiceBackUp extends BaseService<UserApiRequest, UserApiResponse, User> {
 
-    private final String USER_PATH = "users";
+    */
+/*private final String USER_PATH = "users";
 
     @Override
     public EntityModel<UserApiResponse> create(UserApiRequest userApiRequest) {
@@ -56,20 +58,26 @@ public class UserServiceBackUp extends BaseService<UserApiRequest, UserApiRespon
                         .password(user.getPassword())
                         .name(user.getName())
                         .build()));
-    }
+    }*//*
 
+*/
+/*
     private EntityModel<UserApiResponse> getEntityModel(UserApiResponse userApiResponse) {
         return modelAssembler.toModel(userApiResponse, userApiResponse.getId(), USER_PATH);
-    }
+    }*//*
 
+*/
+/*
     private CollectionModel<EntityModel<UserApiResponse>> getCollectionModel(Stream<UserApiResponse> userApiResponseStream) {
         return modelAssembler.toCollectionModel(
                 userApiResponseStream
                         .map(this::getEntityModel)
                         .collect(Collectors.toList()), USER_PATH);
-    }
+    }*//*
+
 }
 
+*/
 
 
 

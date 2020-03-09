@@ -14,7 +14,7 @@ import java.util.Optional;
 import static org.mockito.BDDMockito.given;
 
 class UserServiceTest {
-
+/*
     private UserServiceBackUp userService;
 
     @Mock
@@ -39,5 +39,5 @@ class UserServiceTest {
         ));
 
         userService.detail(id);
-    }
+    }*/
 }
