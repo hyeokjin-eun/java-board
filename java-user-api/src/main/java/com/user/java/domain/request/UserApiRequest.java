@@ -3,6 +3,9 @@ package com.user.java.domain.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @Setter
 @Builder
@@ -11,11 +14,15 @@ import lombok.*;
 public class UserApiRequest {
 
     @JsonProperty
+    @NotBlank
+    @Email
     private String email;
 
     @JsonProperty
+    @NotBlank
     private String password;
 
     @JsonProperty
+    @NotBlank
     private String name;
 }

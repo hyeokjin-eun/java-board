@@ -1,23 +1,15 @@
 package com.user.java.domain;
 
-import com.user.java.ui.CrudController;
-import com.user.java.ui.api.UserController;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.stereotype.Component;
-
-import java.lang.reflect.Method;
-import java.util.List;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
+/*
 @Component
-public class ModelAssembler<Res> implements RepresentationModelAssembler<Res, EntityModel<Res>> {
+public class ModelAssembler<Res, Entity, Controller> implements RepresentationModelAssembler<Entity, EntityModel<Res>> {
+
+    public ModelAssembler(Class<Controller> controller) {
+        super(controller, Class<Res>);
+    }
 
     @Override
-    public EntityModel<Res> toModel(Res res) {
+    public EntityModel<Res> toModel(Entity entity) {
         return null;
     }
 
@@ -26,9 +18,7 @@ public class ModelAssembler<Res> implements RepresentationModelAssembler<Res, En
                 linkTo(CrudController.class).slash(path).withSelfRel());
     }
 
-    public EntityModel<Res> toModel(Res res, Long id, Link link) {
-        return new EntityModel<>(res,
-                linkTo(method, id).withSelfRel(),
-                linkTo(method).withRel("list"));
+    public EntityModel<Res> toModel(Res res, Links links) {
+        return new EntityModel<>(res, links);
     }
-}
+}*/
