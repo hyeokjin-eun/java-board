@@ -24,5 +24,4 @@ public class UserController{
         return ResponseEntity.ok()
                 .body(userService.create(userApiRequest));
     }
-
 }
