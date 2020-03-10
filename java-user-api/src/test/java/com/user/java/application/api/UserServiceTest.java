@@ -1,8 +1,9 @@
 package com.user.java.application.api;
 
+import com.common.domain.entity.User;
+import com.common.infra.UserRepository;
 import com.user.java.domain.request.UserApiRequest;
-import com.user.java.infra.User;
-import com.user.java.infra.UserRepository;
+import com.user.java.domain.response.UserApiResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,8 +13,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
@@ -27,7 +29,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        this.userService = new UserService();
+        this.userService = new UserService(userRepository);
     }
 
     @ParameterizedTest
@@ -40,8 +42,19 @@ class UserServiceTest {
                 .name(name)
                 .build();
 
-        userService.create(userApiRequest);
+        given(userRepository.save(any(User.class))).willReturn(User.builder()
+                .id(id)
+                .email(email)
+                .password(password)
+                .name(name)
+                .build());
+
+        UserApiResponse userApiResponse = userService.create(userApiRequest);
 
         verify(userRepository).save(any(User.class));
+        assertThat(userApiResponse.getId()).isEqualTo(id);
+        assertThat(userApiResponse.getEmail()).isEqualTo(email);
+        assertThat(userApiResponse.getPassword()).isEqualTo(password);
+        assertThat(userApiResponse.getName()).isEqualTo(name);
     }
 }

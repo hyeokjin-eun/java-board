@@ -1,4 +1,4 @@
-package com.user.java.infra;
+package com.common.domain.entity;
 
 import lombok.*;
 
