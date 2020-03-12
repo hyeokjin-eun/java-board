@@ -1,4 +1,4 @@
-package com.common.domain.entity;
+package com.board.java.domain.entity;
 
 import lombok.*;
 

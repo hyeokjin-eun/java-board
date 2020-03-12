@@ -1,6 +1,6 @@
-package com.common.infra;
+package com.board.java.infra;
 
-import com.common.domain.entity.User;
+import com.board.java.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

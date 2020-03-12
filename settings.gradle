@@ -1,6 +1,7 @@
 rootProject.name = 'java'
+include 'java-common'
 include 'java-board-api'
 include 'java-user-api'
 include 'java-board-common'
-include 'java-common'
+
 

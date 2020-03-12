@@ -1,28 +1,25 @@
-package com.user.java.domain.request;
+package com.board.java.domain.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import org.springframework.hateoas.RepresentationModel;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserApiRequest {
+public class UserApiResponse extends RepresentationModel<UserApiResponse> {
 
     @JsonProperty
-    @NotBlank
-    @Email
+    private Long id;
+
+    @JsonProperty
     private String email;
 
     @JsonProperty
-    @NotBlank
     private String password;
 
     @JsonProperty
-    @NotBlank
     private String name;
 }
