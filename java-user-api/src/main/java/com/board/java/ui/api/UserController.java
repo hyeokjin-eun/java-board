@@ -34,14 +34,21 @@ public class UserController{
 
     @GetMapping("")
     public ResponseEntity<?> list() {
-        CollectionModel<UserApiResponse> userApiResponses = userAssembler.toCollectionModel(userService.list());
+        CollectionModel<UserApiResponse> responses = userAssembler.toCollectionModel(userService.list());
         return ResponseEntity.ok()
-                .body(userApiResponses);
+                .body(responses);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<?> detail(@PathVariable Long id) {
         UserApiResponse response = userAssembler.toModel(userService.detail(id));
+        return ResponseEntity.ok()
+                .body(response);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @Validated @RequestBody UserApiRequest userApiRequest) {
+        UserApiResponse response = userAssembler.toModel(userService.update(id, userApiRequest));
         return ResponseEntity.ok()
                 .body(response);
     }

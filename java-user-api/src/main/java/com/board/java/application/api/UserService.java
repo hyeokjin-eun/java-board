@@ -1,6 +1,7 @@
 package com.board.java.application.api;
 
 import com.board.java.domain.entity.User;
+import com.board.java.domain.exception.UserNotFoundException;
 import com.board.java.domain.request.UserApiRequest;
 import com.board.java.domain.response.UserApiResponse;
 import com.board.java.infra.UserRepository;
@@ -46,6 +47,18 @@ public class UserService {
     }
 
     public UserApiResponse detail(Long id) {
+        return userRepository.findById(id)
+                .map(user -> UserApiResponse.builder()
+                        .id(user.getId())
+                        .email(user.getEmail())
+                        .password(user.getPassword())
+                        .name(user.getName())
+                        .build()
+                )
+                .orElseThrow(UserNotFoundException::new);
+    }
+
+    public UserApiResponse update(Long id, UserApiRequest userApiRequest) {
         return null;
     }
 }

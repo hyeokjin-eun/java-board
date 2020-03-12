@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -86,5 +87,27 @@ class UserServiceTest {
         verify(userRepository).findAll();
         assertThat(userApiResponses.get(0).getId()).isEqualTo(1L);
         assertThat(userApiResponses.get(1).getId()).isEqualTo(2L);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"1, email@email.com, password, kim", "2, test@test.com, test, pack"})
+    @DisplayName("유저 상세 Service Test")
+    void detail(Long id, String email, String password, String name) {
+        User user = User.builder()
+                .id(id)
+                .email(email)
+                .password(password)
+                .name(name)
+                .build();
+
+        given(userRepository.findById(id)).willReturn(Optional.of(user));
+
+        UserApiResponse userApiResponse = userService.detail(id);
+
+        verify(userRepository).findById(id);
+        assertThat(userApiResponse.getId()).isEqualTo(id);
+        assertThat(userApiResponse.getEmail()).isEqualTo(email);
+        assertThat(userApiResponse.getPassword()).isEqualTo(password);
+        assertThat(userApiResponse.getName()).isEqualTo(name);
     }
 }

@@ -25,10 +25,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -198,5 +198,99 @@ class UserControllerTest {
                 .andExpect(status().isNotFound());
 
         verify(userService).detail(id);
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"1, email@email.com, password, kim", "2, test@test.com, test, pack"})
+    @DisplayName("유저 수정 API Controller Test")
+    void update(Long id, String email, String password, String name) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(UserApiRequest.builder()
+                .email(email)
+                .password(password)
+                .name(name)
+                .build());
+
+        UserApiResponse userApiResponse = UserApiResponse.builder()
+                .id(id)
+                .email(email)
+                .password(password)
+                .name(name)
+                .build();
+
+        given(userService.update(eq(id), any(UserApiRequest.class))).willReturn(userApiResponse);
+
+        mockMvc.perform(put("/users/" + id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.email").value(email))
+                .andExpect(jsonPath("$.password").value(password))
+                .andExpect(jsonPath("$.name").value(name));
+
+        verify(userService).update(eq(id), any(UserApiRequest.class));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"email", "''"})
+    @DisplayName("유저 수정 API Controller 이메일 Validation Test")
+    void updateEmailValidationCheck(String email) throws Exception {
+        UserApiRequest userApiRequest = UserApiRequest.builder()
+                .email(email)
+                .password("password")
+                .name("kim")
+                .build();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(userApiRequest);
+
+        mockMvc.perform(put("/users/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"''"})
+    @DisplayName("유저 수정 API Controller 비밀번호 Validation Test")
+    void updatePasswordValidationCheck(String passowrd) throws Exception {
+        UserApiRequest userApiRequest = UserApiRequest.builder()
+                .email("email@email.com")
+                .password(passowrd)
+                .name("kim")
+                .build();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(userApiRequest);
+
+        mockMvc.perform(put("/users/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"''"})
+    @DisplayName("유저 수정 API Controller 이름 Validation Test")
+    void updateNameValidationCheck(String name) throws Exception {
+        UserApiRequest userApiRequest = UserApiRequest.builder()
+                .email("email@email.com")
+                .password("password")
+                .name(name)
+                .build();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(userApiRequest);
+
+        mockMvc.perform(put("/users/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }
