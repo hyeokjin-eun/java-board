@@ -59,6 +59,13 @@ public class UserService {
     }
 
     public UserApiResponse update(Long id, UserApiRequest userApiRequest) {
-        return null;
+        return userRepository.findById(id)
+                .map(user -> UserApiResponse.builder()
+                        .email(user.getEmail())
+                        .password(user.getPassword())
+                        .name(user.getName())
+                        .build()
+                )
+                .orElseThrow(UserNotFoundException::new);
     }
 }
