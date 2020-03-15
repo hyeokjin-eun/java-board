@@ -110,4 +110,19 @@ class UserServiceTest {
         assertThat(userApiResponse.getPassword()).isEqualTo(password);
         assertThat(userApiResponse.getName()).isEqualTo(name);
     }
+
+    @ParameterizedTest
+    @CsvSource(value = {"1, email@email.com, password, kim", "2, test@test.com, test, pack"})
+    @DisplayName("유저 수정 Service Test")
+    void update(Long id, String email, String password, String name) {
+        UserApiRequest userApiRequest = UserApiRequest.builder()
+                .email(email)
+                .password(password)
+                .name(name)
+                .build();
+
+        UserApiResponse userApiResponse = userService.update(id, userApiRequest);
+
+        verify(userRepository).findById(id);
+    }
 }
