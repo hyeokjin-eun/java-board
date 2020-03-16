@@ -122,14 +122,42 @@ class UserServiceTest {
                 .name(name)
                 .build()));
 
-        UserApiRequest userApiRequest = UserApiRequest.builder()
+        given(userRepository.save(any(User.class))).willReturn(User.builder()
+                .id(id)
+                .email("update@update.com")
+                .password("update")
+                .name("alvin")
+                .build());
+
+        UserApiResponse userApiResponse = userService.update(id, UserApiRequest.builder()
                 .email(email)
                 .password(password)
                 .name(name)
-                .build();
-
-        UserApiResponse userApiResponse = userService.update(id, userApiRequest);
+                .build());
 
         verify(userRepository).findById(id);
+        verify(userRepository).save(any(User.class));
+        assertThat(userApiResponse.getId()).isEqualTo(id);
+        assertThat(userApiResponse.getEmail()).isEqualTo("update@update.com");
+        assertThat(userApiResponse.getPassword()).isEqualTo("update");
+        assertThat(userApiResponse.getName()).isEqualTo("alvin");
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"1", "2"})
+    @DisplayName("유저 삭제 Service Test")
+    void delete(Long id) {
+        given(userRepository.findById(id)).willReturn(Optional.of(User.builder()
+                .id(id)
+                .email("email@email.com")
+                .password("password")
+                .name("kim")
+                .build()));
+
+        String response = userService.delete(id);
+
+        verify(userRepository).findById(id);
+        verify(userRepository).delete(any(User.class));
+        assertThat(response).isEqualTo("{}");
     }
 }

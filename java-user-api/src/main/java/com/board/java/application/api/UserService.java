@@ -60,12 +60,27 @@ public class UserService {
 
     public UserApiResponse update(Long id, UserApiRequest userApiRequest) {
         return userRepository.findById(id)
+                .map(user -> userRepository.save(user
+                        .setEmail(userApiRequest.getEmail())
+                        .setPassword(userApiRequest.getPassword())
+                        .setName(userApiRequest.getName()))
+                )
                 .map(user -> UserApiResponse.builder()
+                        .id(user.getId())
                         .email(user.getEmail())
                         .password(user.getPassword())
                         .name(user.getName())
                         .build()
                 )
+                .orElseThrow(UserNotFoundException::new);
+    }
+
+    public String delete(Long id) {
+        return userRepository.findById(id)
+                .map(user -> {
+                    userRepository.delete(user);
+                    return "{}";
+                })
                 .orElseThrow(UserNotFoundException::new);
     }
 }

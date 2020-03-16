@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
 import java.util.List;
@@ -292,5 +293,16 @@ class UserControllerTest {
                 .content(json))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"1", "2"})
+    @DisplayName("유저 삭제 API Controller Test")
+    void delete(Long id) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/users/" + id))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        verify(userService).delete(id);
     }
 }
