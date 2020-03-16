@@ -115,6 +115,13 @@ class UserServiceTest {
     @CsvSource(value = {"1, email@email.com, password, kim", "2, test@test.com, test, pack"})
     @DisplayName("유저 수정 Service Test")
     void update(Long id, String email, String password, String name) {
+        given(userRepository.findById(id)).willReturn(Optional.of(User.builder()
+                .id(id)
+                .email(email)
+                .password(password)
+                .name(name)
+                .build()));
+
         UserApiRequest userApiRequest = UserApiRequest.builder()
                 .email(email)
                 .password(password)
