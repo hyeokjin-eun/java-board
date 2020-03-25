@@ -2,6 +2,7 @@ package com.board.java.domain.util;
 
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -18,6 +19,7 @@ class JwtUtilTest {
 
     @ParameterizedTest
     @CsvSource("1, email@email.com, kim")
+    @DisplayName("토큰 생성 로직 Test")
     void createToken(Long id, String email, String name) {
         String jwtToken = "eyJhbGciOiJIUzI1NiJ9." +
                 "eyJpZCI6MSwiZW1haWwiOiJlbWFpbEBlbWFpbC5jb20iLCJuYW1lIjoia2ltIn0." +
@@ -30,6 +32,7 @@ class JwtUtilTest {
 
     @ParameterizedTest
     @CsvSource("eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZW1haWwiOiJlbWFpbEBlbWFpbC5jb20iLCJuYW1lIjoia2ltIn0.MC4CfFKE_p50W1snULDmwVYYCw7Wtf-SpBr7Z9nR7i4")
+    @DisplayName("Token Get Claims 데이터 추출 Test")
     void getClaims(String token) {
         Claims claims = jwtUtil.getClaims(token);
 
