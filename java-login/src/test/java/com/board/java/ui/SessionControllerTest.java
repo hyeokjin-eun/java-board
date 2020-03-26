@@ -3,23 +3,18 @@ package com.board.java.ui;
 import com.board.java.application.UserService;
 import com.board.java.domain.request.SessionApiRequest;
 import com.board.java.domain.response.SessionApiResponse;
-import com.board.java.domain.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -40,7 +35,7 @@ class SessionControllerTest {
 
     @ParameterizedTest
     @CsvSource(value = "email@email.com, password")
-    @DisplayName("로그인 Session Create Controller Test")
+    @DisplayName("세션 생성 API Controller Test")
     void create(String email, String password) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(SessionApiRequest.builder()
@@ -64,5 +59,39 @@ class SessionControllerTest {
                         "MC4CfFKE_p50W1snULDmwVYYCw7Wtf-SpBr7Z9nR7i4"));
 
         verify(userService).authenticate(any(SessionApiRequest.class));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = "email, ''")
+    @DisplayName("세션 생성 API Controller 이메일 Validation Test")
+    void createEmailValidationCheck(String email) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(SessionApiRequest.builder()
+                .email(email)
+                .password("password")
+                .build());
+
+        mockMvc.perform(post("/session")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = "''")
+    @DisplayName("세션 생성 API Controller 비밀번호 Validation Test")
+    void createPasswordValidationCheck(String password) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(SessionApiRequest.builder()
+                .email("email@email.com")
+                .password(password)
+                .build());
+
+        mockMvc.perform(post("/session")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }
