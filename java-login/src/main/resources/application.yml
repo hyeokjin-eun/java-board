@@ -1,0 +1,16 @@
+server:
+  port: 29901
+
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /db
+  datasource:
+    url: jdbc:h2:mem:test
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+jwt:
+  secret: secret-key-eatgo-fastcampus-project
