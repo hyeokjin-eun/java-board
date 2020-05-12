@@ -25,4 +25,5 @@ public class SecurityJavaConfig extends WebSecurityConfigurerAdapter {
     public JwtUtil jwtUtil() {
         return new JwtUtil(secret);
     }
+    
 }
